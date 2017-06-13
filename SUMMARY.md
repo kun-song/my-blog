@@ -11,6 +11,7 @@
             * [中断](java/interrupts.md)
             * [Join](java/join.md)
             * [例子](java/the_simpleThreads_example.md)
+        * [Guarded Blocks](java/guarded_blocks.md)
 * [Scala](scala.md)
 * [Maven](maven.md)
 * [Git](git.md)
