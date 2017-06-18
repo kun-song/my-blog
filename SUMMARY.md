@@ -2,6 +2,8 @@
 
 * [Introduction](README.md)
 * [Spring](spring.md)
+* [Spring Boot](springboot/introduction.md)
+    * [测试](springboot/test.md)
 * [Java](java/java.md)
     * [Java 并发课程](java/OracleJavaTutorials/java_lesson_concurrency.md)
         * [进程与线程](java/OracleJavaTutorials/processes_and_threads.md)
@@ -14,6 +16,7 @@
         * [同步 Synchronization](java/OracleJavaTutorials/synchronization.md)
             * [线程干扰](java/OracleJavaTutorials/thread_interference.md)
             * [内存一致性错误](java/OracleJavaTutorials/memory_consistency_errors.md)
+            * [同步方法](java/OracleJavaTutorials/synchronized_methods.md)
             * [内置锁与同步](java/OracleJavaTutorials/intrinsic_locks_and_synchronization.md)
             * [原子访问](java/OracleJavaTutorials/atomic_access.md)
         * [Guarded Blocks](java/OracleJavaTutorials/guarded_blocks.md)
