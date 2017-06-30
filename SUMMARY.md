@@ -13,6 +13,7 @@
             * [中断](java/OracleJavaTutorials/interrupts.md)
             * [Join](java/OracleJavaTutorials/join.md)
             * [例子](java/OracleJavaTutorials/the_simpleThreads_example.md)
+            * [Thread 常用方法](java/OracleJavaTutorials/thread_methods.md)
         * [同步 Synchronization](java/OracleJavaTutorials/synchronization.md)
             * [线程干扰](java/OracleJavaTutorials/thread_interference.md)
             * [内存一致性错误](java/OracleJavaTutorials/memory_consistency_errors.md)
