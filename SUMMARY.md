@@ -30,8 +30,10 @@
             * [并发集合](java/OracleJavaTutorials/concurrent_collections.md)
             * [原子变量](java/OracleJavaTutorials/atomic_variables.md)
             * [并发随机数](java/OracleJavaTutorials/concurrent_random_numbers.md)
+    * [JSR 133 (Java Memory Model) FAQ](java/jsr133_faq.md)
 * [Scala](scala.md)
 * [Maven](maven.md)
 * [Git](git.md)
 * [React](react.md)
     * [Redux](redux.md)
+
