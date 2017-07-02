@@ -15,7 +15,7 @@
             * [例子](java/OracleJavaTutorials/the_simpleThreads_example.md)
             * [Thread 常用方法](java/OracleJavaTutorials/thread_methods.md)
         * [同步 Synchronization](java/OracleJavaTutorials/synchronization.md)
-            * [线程干扰](java/OracleJavaTutorials/thread_interference.md)
+            * [线程干扰（竞态条件）](java/OracleJavaTutorials/thread_interference.md)
             * [内存一致性错误](java/OracleJavaTutorials/memory_consistency_errors.md)
             * [同步方法](java/OracleJavaTutorials/synchronized_methods.md)
             * [内置锁与同步](java/OracleJavaTutorials/intrinsic_locks_and_synchronization.md)
@@ -35,4 +35,3 @@
 * [Git](git.md)
 * [React](react.md)
     * [Redux](redux.md)
-
