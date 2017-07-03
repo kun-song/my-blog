@@ -233,20 +233,94 @@ public FinalFieldExample() { // bad!
 
 ## `volatile` 是做什么的？
 
+`volatile` 变量用来在线程之间进行 **状态通信**，每次读 `volatile` 变量都会看到其 **最新写入的值**（任意线程写入）：
 
+* 不受缓存、重排序的影响
+* 禁止编译器、运行时将其放入 **寄存器**
+* 每次写入，立即 **刷新缓存**，将其写入主内存（立刻对其他线程可见）
+* 每次读取，必须 **`invalidate` 缓存**，进而从主内存读取（保证获取最新值）
 
+老内存模型下，`volatile` 变量的读写操作之间 **无法重排序**，但 `volatile` 变量的操作与非 `volatile` 变量的操作之间可以重排序，这减弱了 `volatile` 字段作为线程之间 **信号通信** 的作用。
+
+在新内存模型下，仍然 `volatile` 操作之间仍然不能重排序，与以前不同的是，`volatile` 操作与普通字段的操作之间很难出现重排序。
+
+* 写入 `volatile` 变量与 **释放内置锁** 效果相同
+* 读取 `volatile` 变量与 **获取内置锁** 效果相同
+
+新内存模型对 `volatile` 字段操作与普通字段操作之间的重排序施加了 **更加严格** 的约束，无论是否为 `volatile` 字段，任意字段如果在线程 `t` 写入 `volatile` 字段 `f` 时对 `t` 可见，则在线程 `s` 读取 `f` 时，这些字段对 `s` 可见。
+
+下面是使用 `volatile` 变量的例子：
+
+```
+class VolatileExample {
+  int x = 0;
+
+  volatile boolean v = false;
+
+  public void writer() {
+    x = 42;
+    v = true;
+  }
+
+  public void reader() {
+    if (v == true) {
+      //uses x - guaranteed to see 42.
+    }
+  }
+}
+```
+
+假设线程 `t` 调用 `writer` 方法，线程 `s` 调用 `reader` 方法。则 `writer` 方法中对 `v` 的写入操作保证对 `x` 的写入也被刷新到主内存，`reader` 方法读取 `v` 时，如果得到的是 `true`，则可保证获取 `x` 必然为 42。在老内存模型下，编译器可对 `writer` 中的两个操作重排序，此时 `reader` 读取到的 `x` 可能为 0。
+
+`volatile` 的语义被大大增强，几乎与 **同步** 相同，在 **可见性** 方面，对 `volatile` 字段的读、写操作作用各相当于同步的一半。
+
+> **注意**：多线程必须对 **同一** `volatile` 变量进行有序访问，以创建 `happens-before` 关系。比如，线程 `t` 写入 `volatile` 字段 `f` 时对 `t` 可见的字段，当线程 `s` 读取 `volatile` 字段 `g` 时，对 `s` 并不可见，必须是对 **同一** `volatile` 字段的读、写操作才有效。
 
 ## 新内存模型修复 *双重检查加锁* 的问题了吗？
 
+臭名昭著的 *双重检查加锁** 机制支持 `lazy initialization`，同时避免了同步开销。在早期的 JVM 中，同步速度很慢，开发者非常希望能去掉同步，双重检查加锁代码如下：
 
+```
+// double-checked-locking - don't do this!
 
+private static Something instance = null;
+
+public Something getInstance() {
+  if (instance == null) {
+    synchronized (this) {
+      if (instance == null)
+        instance = new Something();
+    }
+  }
+  return instance;
+}
+```
+
+这看起来很聪明，在常规代码路径上避免了同步，这代码只有一个问题：无法工作。最明显的原因是创建 `Something` 的写操作、对 `instance` 赋值的写操作可能会被 **重排序**，导致可能返回一个 **部分构造** 的对象。这段代码还有很多其他错误，并且在算法正确性上也是错的，在老内存模型下根本无法修复。更多资料参考 [Double-checked locking: Clever, but broken](http://www.javaworld.com/article/2074979/java-concurrency/double-checked-locking--clever--but-broken.html)、[The "Double Checked Locking is broken" declaration](http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html)。
+
+有人认为使用 `volatile` 关键字可以解决双重检查加锁的问题，但在 1.5 之前的 JVM 中，`volatile` 关键字不保证正常工作。在新内存模型中，将 `instance` 定义为 `volatile` 可以修复双重检查加锁的问题，因为 `volatile` 会在执行 `Something` 构造初始化的线程和 `return` 语句之间建立 `happens-before` 关系。
+
+尽量使用 `Initialization On Demand Holder`，这是线程安全的，且更容易理解：
+
+```
+private static class LazySomethingHolder {
+  public static Something something = new Something();
+}
+
+public static Something getInstance() {
+  return LazySomethingHolder.something;
+}
+```
+
+上述代码可以保证正确性，因为若一个字段在 `static` 初始化器中设置，可保证对任意访问该类的线程保证可见性、正确性。
 
 ## 如果要写虚拟机该怎么做？
 
+请阅读 [这里](http://gee.cs.oswego.edu/dl/jmm/cookbook.html)。
 
 ## 为何要关心内存模型？
 
-
+并发导致的 bug 难以调试、难以复现，虽然花精力保证程序的正确同步很难，但要比调试错误同步的程序容易的多。
 
 
 
