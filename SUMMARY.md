@@ -9,11 +9,6 @@
         * [进程与线程](java/OracleJavaTutorials/processes_and_threads.md)
         * [线程对象](java/OracleJavaTutorials/thread_objects.md)
         * [同步 Synchronization](java/OracleJavaTutorials/synchronization.md)
-            * [线程干扰（竞态条件）](java/OracleJavaTutorials/thread_interference.md)
-            * [内存一致性错误](java/OracleJavaTutorials/memory_consistency_errors.md)
-            * [同步方法](java/OracleJavaTutorials/synchronized_methods.md)
-            * [内置锁与同步](java/OracleJavaTutorials/intrinsic_locks_and_synchronization.md)
-            * [原子访问](java/OracleJavaTutorials/atomic_access.md)
         * [活跃性](java/OracleJavaTutorials/liveness.md)
             * [死锁](java/OracleJavaTutorials/deadlock.md)
             * [饥饿与活锁](java/OracleJavaTutorials/starvation_and_livelock.md)
@@ -30,4 +25,3 @@
 * [Git](git.md)
 * [React](react.md)
     * [Redux](redux.md)
-
