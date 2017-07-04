@@ -10,8 +10,6 @@
         * [线程对象](java/OracleJavaTutorials/thread_objects.md)
         * [同步 Synchronization](java/OracleJavaTutorials/synchronization.md)
         * [活跃性](java/OracleJavaTutorials/liveness.md)
-            * [死锁](java/OracleJavaTutorials/deadlock.md)
-            * [饥饿与活锁](java/OracleJavaTutorials/starvation_and_livelock.md)
         * [Guarded Blocks](java/OracleJavaTutorials/guarded_blocks.md)
         * [高级并发](java/OracleJavaTutorials/high_level_concurrency_object.md)
             * [锁](java/OracleJavaTutorials/lock.md)
@@ -25,3 +23,4 @@
 * [Git](git.md)
 * [React](react.md)
     * [Redux](redux.md)
+
