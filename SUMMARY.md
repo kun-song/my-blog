@@ -24,4 +24,5 @@
 * [Git](git.md)
 * [React](react.md)
     * [Redux](redux.md)
+* [阅读计划](read/read.md)
 
