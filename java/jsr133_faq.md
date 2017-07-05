@@ -128,8 +128,6 @@ JSR 133 目标如下：
 
 从缓存角度看，似乎上面的情况只会影响多处理器机器，但在单处理器机器上也是一样的。
 
-The new memory model semantics create a partial ordering on memory operations (read field, write field, lock, unlock) and other thread operations (start and join), where some actions are said to happen before other operations. When one action happens before another, the first is guaranteed to be ordered before and visible to the second. The rules of this ordering are as follows:
-
 新内存模型在 **内存操作**（字段读、字段写、加锁、释放所）与 **线程操作**（`start` `join`）之上建立了一种 **部分有序关系**，一些操作 `happen-before` 其他操作。
 
 当操作 `A` `happen-before` 操作 `B` 时，有如下保证：
@@ -146,8 +144,6 @@ The new memory model semantics create a partial ordering on memory operations (r
 1. All actions in a thread happen before any other thread successfully returns from a `join()` on that thread.
 
 任意内存操作，如果对 **退出同步代码之前** 的线程 `t` 可见，则在任意线程 **进入** 相同 `monitor` 保护的同步代码块后，这些操作对于 **该线程** 可见，因为所有内存操作 `happen-before` 释放锁，而释放锁 `happen-before` 获取锁。
-
-Another implication is that the following pattern, which some people use to force a memory barrier, doesn't work:
 
 有人用如下代码创建 `memory barrier`，但根本无效：
 
@@ -177,8 +173,6 @@ String s2 = s1.substring(4);
 ## `final` 变量在新 JMM 下如何工作？
 
 对象的 `final` 字段的值在构造函数中设置，假设对象被正确构造（无逸出），不需要同步，在构造函数中设置的 `final` 值对 **所有线程** 可见。
-
-In other words, do not place a reference to the object being constructed anywhere where another thread might be able to see it; do not assign it to a static field, do not register it as a listener with any other object, and so on. These tasks should be done after the constructor completes, not in the constructor.
 
 正确构造意味着在 **构造过程中** 没有 **逸出** 本对象的引用（因此此时还未构造完成，若有引用逸出，则其他线程可以访问未构造完的对象），如下都会导致对象逸出，都应该在构造完成后做：
 
