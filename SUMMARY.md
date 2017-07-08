@@ -24,5 +24,8 @@
 * [Git](git.md)
 * [React](react.md)
     * [Redux](redux.md)
+* [Programming Languages](pl/programming-languages.md)
+    * [Part A]
+        * [安装软件](pl/parta/installation.md)
 * [阅读计划](read/read.md)
 
