@@ -36,3 +36,13 @@ Emacs 快捷键经常使用 `Control` `Meta` 键，分别用 `C-x` `M-x` 标记�
 编辑 `~/.bash_profile` 文件，添加 `export PATH=$PATH:/usr/local/smlnj/bin`，并导入配置 `source .bash_profile`。
 
 在终端输入 `𝚜𝚖𝚕` 验证是否安装成功，使用 `Ctrl D` 退出 `sml`。
+
+## 安装 Emacs SML 扩展
+
+在 Emacs 中输入 `M-x list-packages` 查看是否有 `sml-mode` 插件，如果没有输入 `C-x k` 关闭当前 `buffer`，按下面步骤手动安装：
+
+* 在 [这里](http://elpa.gnu.org/packages/sml-mode.html) 下载 `sml-mode-6.7.el` 文件。
+* 在 Emacs 中输入 `sml-mode-6.7.el` 回车后输入 `sml-mode-6.7.el` 文件所在目录，回车后即可进行安装。
+* 重启 Emacs。
+
+再次进入 Emacs，用 `C-x C-f` 新建一个 `.sml` 文件，若模式从 `Fundamental` 变成 `SML`，输入 `C-c C-s` 回车，会打开一个 `sml` 命令行窗口，此时输入 `use "test.sml";` 会导入 `test.sml` 文件到当前 `sml` 命令行窗口中。

@@ -25,7 +25,8 @@
 * [React](react.md)
     * [Redux](redux.md)
 * [Programming Languages](pl/programming-languages.md)
-    * [Part A]
+    * Part A
         * [安装软件](pl/parta/installation.md)
+        * [第一部分](pl/parta/section1.md)
 * [阅读计划](read/read.md)
 
