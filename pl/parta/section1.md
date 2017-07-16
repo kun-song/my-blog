@@ -182,46 +182,208 @@ e0 (e1, ... ,en)
 
 若 `e1` 计算结果为 `v1`，`e2` 计算结果为 `v2`，则 `(e1, e2)` 计算结果为 `(v1, v2)`。
 
+### `list`
 
+`pairs` 或 `tuple` 与 `list` 对比：
 
+* `tuple` 元素数量确定、元素类型可以不同。
+* `list` 元素数量不确定，类型必须相同。
 
+`list` 的构造方式有两种：
 
+1. 直接构造：`[1, 2, 3]`
+2. 通过 `cons` 操作：`e1 :: list`
 
+`list` 操作方法有三种：
 
+1. `null` 函数：判断 `list` 是否为 `[]`
+2. `hd` 获取头元素，若列表为 `[]`，抛出异常
+3. `tl` 获取尾列表，若列表为 `[]`，抛出异常
 
+#### 例子
 
+```
+fun sum_list(xs: int list) =
+  if null xs
+  then 0
+  else hd xs + sum_list(tl xs)
+```
 
+操作 `list` 的函数基本都是 **递归** 函数，考虑两个方面：
 
+1. 如何处理 `empty list`
+2. 使用 `the tail of the list` 计算出 `non-empty list` 的结果
 
+### `let` 表达式
 
+定义 `local bindings`，作用有二：
 
+* `for style and convenience`
+* `for efficiency`（`local function bindings`）
 
+#### 语法
 
+```
+let b1 b2 ... bn in e end
+```
+* `bi` 为任意绑定，`e` 为任意表达式
 
+#### 类型检查规则
 
+对 `bi` `e` 进行类型检查，整个 `let` 表达式的类型为 `e` 的类型（`e` 的类型可能需要 `bi` 的类型，所以 `bi` 的类型也是需要的）。
 
+#### 计算规则
 
+计算 `bi` `e`，`let` 表达式的计算结果为 `e` 的结果。
 
+#### 闭包
 
+```
+fun count_from1_better(x: int) =
+  let
+    fun count(from: int) =
+      if from = x
+      then []
+      else from :: count(from + 1)
+  in
+    count 1
+  end;
+```
 
+局部函数绑定可以使用当前 `environment` 中的其他绑定，即：
 
+* `count` 函数可以使用外部参数 `x`
+* `count` 函数也可以使用 `let` 中前面定义的绑定
 
+这里嵌套定义了 `count` 辅助函数，此类函数具有以下特点：
 
+1. 不会用于其他地方
+2. 若在其他地方使用，可能会被 **误用**，比如 `count` 若 `from` 传入值大于 `x`，则永远不会停止
 
+#### 使用 `let` 表达式提升效率
 
+```
+(* [5, 4, 3, 2, 1] *)
+fun countdown(from: int, to: int) =
+  if from = to
+  then to :: []
+  else from :: countdown(from - 1, to);
 
+(* [1, 2, 3, 4, 5] *)
+fun countup(from: int, to: int) =
+  if from = to
+  then to :: []
+  else from :: countup(from + 1, to);
 
+(*
+   1. bad_max 在 list 为递减列表时，效率很高，为 O(n)
+   2. bad_max 在 list 为递增列表时，效率迅速下降，为 O(2^n)
+*)
+fun bad_max(xs: int list) =
+  if null xs
+  then 0 (* 坏风格，以后修正 *)
+  else
+      if hd xs > bad_max(tl xs) (* 1 *)
+      then hd xs
+      else bad_max(tl xs); (* 2 *)
 
+(*
+   1. 通过 let 表达式定义局部绑定，减少重复递归调用，时间复杂度提升为 O(n)
+*)
+fun better_max(xs: int list) =
+  if null xs
+  then 0
+  else
+      let val tl_ans = better_max(tl xs)
+      in
+    	  if hd xs > tl_ans
+    	  then hd xs
+    	  else tl_ans
+      end;
+```
 
+#### 通过 `Option` 提升可读性
 
+上面的例子里，对于空列表，返回了 0，但 0 并非空表中的最大元素，这不符合语义，可以使用 `Option` 改善。
 
+##### `Option`
 
+`Option` 类型为 `t option`，可以通过两种方式构建：
 
+1. `NONE` 为 `'a option` 类型的值
+2. `SOME e`，若 `e` 类型为 `t`，则 `SOME e` 类型为 `t option`
 
+访问 `Option` 的值：
 
+1. `isSome` 函数：`t option -> bool`
+2. `valOf` 函数：`t option -> t`
 
+```
+fun better_max(xs: int list) =
+  if null xs
+  then NONE (* option *)
+  else
+      let fun max(xs: int list) =
+        if null(tl xs)
+        then hd xs
+        else
+          let val tl_ans = max(tl xs)
+          in
+        	  if hd xs > tl_ans
+        	  then hd xs
+        	  else tl_ans
+          end;
+      in
+        SOME(max xs) (* option *)
+      end;
+```
 
+### 逻辑运算符
 
+```
+e1 andalso e2
+e1 orelse e2
 
+not e
+```
 
-噼噼啪啪铺
+* `andalso` `orelse` 是语言关键字，因为它们不一定会计算 `e2`，而函数首先会计算所有参数。
+* `not` 是函数。
+* `e1` `e2` 可以是任意表达式，但计算结果 **必须是 `bool`**。
+
+### 比较运算符
+
+```
+= <>    > < >= <=
+```
+* 6 个运算符最初是用于 `int`
+* 后 4 个也可以用于 `real`（浮点型），但不能用于 `real` 和 `int` 比较
+* 前 2 个可用于 **任意 `equality type`**, 但 `real` 不是 `equality type`，不能使用
+
+## 不可变数据
+
+```
+fun sort_pair(pr: int * int) =
+  if #1 pr < #2 pr
+  then (#1 pr, #2 pr)
+  else (#2 pr, #1 pr)
+
+fun sort_pair(pr: int * int) =
+  if #1 pr < #2 pr
+  then pr
+  else (#2 pr, #1 pr)
+```
+
+上面两种实现，在 `ML` 中 **无法区分**，因为 `pair` 是不可变的，所以返回参数的 `pr` 与返回一个 **`pr` 副本** 并没有区别：都没有办法修改返回值，而且也没有办法修改参数值。
+
+但在 Java 中，这两种差别很大。
+
+在 ML 中，经常使用 `alias`，即直接返回 `pr` 这种，而不需要使用副本，而 Java 为了避免数据被修改，经常需要返回副本。
+
+## 学习语言的 5 个方面
+
+1. 语法：怎么写
+2. 语义：代码的含义
+3. 习惯用法：该语言的常用表达方式
+4. 库：语言携带、第三方
+5. 工具：调试、格式化、REPL 等
