@@ -27,6 +27,7 @@
 * [Programming Languages](pl/programming-languages.md)
     * Part A
         * [安装软件](pl/parta/installation.md)
-        * [第一部分](pl/parta/section1.md)
+        * [第一部分：基础](pl/parta/section1.md)
+        * [第二部分：类型定义](pl/parta/section2.md)
 * [阅读计划](read/read.md)
 
