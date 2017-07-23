@@ -29,5 +29,6 @@
         * [安装软件](pl/parta/installation.md)
         * [第一部分：基础](pl/parta/section1.md)
         * [第二部分：类型定义](pl/parta/section2.md)
+        * [第三部分：第一等函数、闭包、高阶函数](pl/parta/section3.md)
 * [阅读计划](read/read.md)
 
