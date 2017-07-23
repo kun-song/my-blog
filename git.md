@@ -71,3 +71,29 @@ git branch -d xx
 * 删除分支：`git branck -d xx`
 
 注意，创建 + 切换分支常常用 `git checkout -b xx` 代替。
+
+## 储藏（stashing）
+
+应用场景：代码写了一半，不能提交，但需要转到其他分支工作，此时可以将进行一半的工作储藏起来，以后随时可以回到这个工作点。
+
+1. `git stash` 储藏当前未提交的工作；
+2. 切换到其他分支工作，完成后重新切换到当前分支；
+3. `git stash list` 可以查看现有的储藏列表；
+4. `git stash apply` 可以恢复最近的储藏，也可以恢复指定的储藏：`git stash apply stash@{0}`；
+5. `git stash apply` 只尝试应用储藏的工作，但储藏的内容仍然在栈上，要移除，需要运行：`git stash drop stash@{xx}`
+
+> 第 4、5 步可以用 `git stash pop` 代替，应用储藏、并且移除储藏。
+
+## 重写提交历史
+
+### 修改最近一次提交
+
+```
+git commit --amend
+```
+
+### 修改多次提交历史
+
+1. 查看提交历史 `git log`，找到需要保留的最近一次提交的 hash 值，假设为 xxxx；
+2. `git rebase -i xxxx`，会进入 vim 编辑模式，将最上面的 `pick` 保留，其余 `pick` 修改为 `squash` 或者 `s`；
+3. 保存退出后进入 log 编辑，重新合并每次的提交记录，保存退出后，多个提交就已经合并了；
