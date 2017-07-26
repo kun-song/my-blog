@@ -114,3 +114,74 @@ fun filter (f, xs) = (* 遍历 xs，取 f x 为 true 的元素，组成新列表
 
 ```
 * 该函数类型为：`('a -> bool) * 'a list -> 'b list`
+
+## 函数作为返回值
+
+```
+(* double_or_triple 接受函数 f 作为参数，并且返回一个函数 *)
+fun double_or_triple f =
+  if f 7
+  then fn x => x * 2
+  else fn x => x * 3;
+
+(* 调用 double_or_triple 获取返回函数 *)
+val double = double_or_triple (fn x => x = 7);
+val triple = double_or_triple (fn x => x <> 7);
+
+val test1 = double 2 = 4;
+val test2 = triple 2 = 6;
+```
+
+> 注意：double_or_triple 类型为 (int -> bool) -> int -> int，由于 `->` 是右结合的，所以等价于 (int -> bool) -> (int -> int)。
+
+## 高阶函数用于自定义 `datatype`
+
+```
+datatype exp = Constant of int
+	     | Negate of exp
+	     | Add of exp * exp
+	     | Multiply of exp * exp;
+
+fun true_of_all (f, ex) =
+  case ex of
+      Constant i => f i
+    | Negate i => true_of_all (f, i)
+    | Add (x, y) => true_of_all (f, x) andalso true_of_all (f, y)
+    | Multiply (x, y) => true_of_all (f, x) andalso true_of_all (f, y);
+
+
+fun all_even e = true_of_all (fn x => x mod 2 = 0, e);
+
+val test1 = all_even (Add (Constant ~1, Negate (Constant 2))) = false;
+val test2 = all_even (Add (Multiply(Constant 4, Constant 2), Negate (Constant 2))) = true;
+
+fun all_positive e = true_of_all (fn x => x > 0, e);
+
+val test1 = all_positive (Add (Constant ~1, Negate (Constant 2))) = false;
+val test2 = all_positive (Add (Multiply(Constant 4, Constant 2), Negate (Constant 2))) = true;
+```
+
+* 高阶函数适用于 **递归数据结构**
+
+## 词法作用域 `lexical scope`
+
+函数可以使用 `scope` 中所有绑定，但这个 `scope` 具体是指什么呢？函数有两个重要阶段：
+
+1. 定义阶段
+2. 调用阶段
+
+### 闭包
+
+> Functions are values.
+
+但是 `Function Value` 到底是什么样的值呢？
+
+ML 称 **function value** 为 `function closure` 或者 `closure`，包含两部分：
+
+1. `code` 即函数代码
+2. `environment` 即函数 **定义时** 的环境
+
+这类似 ML 中的 `pair`，但无法分别访问这两部分，使用该 `pair` 的唯一方式为：函数调用，即：
+
+* 在 `environment` + 函数参数扩展 中
+* 执行 `code`
