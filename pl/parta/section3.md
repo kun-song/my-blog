@@ -185,3 +185,235 @@ ML 称 **function value** 为 `function closure` 或者 `closure`，包含两部
 
 * 在 `environment` + 函数参数扩展 中
 * 执行 `code`
+
+### `lexical scope` 优势
+
+编程语言中有两种作用域：
+
+1. `lexical scope`：使用 **函数定义** 时的 `environment`
+2. `dynamic scope`：使用 **函数调用** 时的 `environment`
+
+十几年前，大家认为这两种作用域都是合理的，但到今天，编程语言普遍采用 `lexical scope`，很少有采用 `dynamic scope` 的语言。
+
+### 闭包 & 重复计算
+
+* **函数调用** 时会计算函数体
+* **每次** 函数调用都会计算函数体
+* 变量绑定，只有在 **该绑定被计算时** 才会计算其绑定的 **表达式**，并非每个使用该绑定就会计算其表达式
+
+有了以上三点，可以减少重复计算。
+
+```
+fun filter (f, xs) =
+  case xs of
+      [] => []
+    | x :: xs' => if f x
+		  then x :: filter(f, xs')
+		  else filter(f, xs');
+
+(* 对于 xs 中的每个元素，传入的闭包都要计算一次，则 String.size s 也需要重复计算很多次 *)
+fun allShorterThan1 (xs, s) = filter(fn x => String.size x < (print "!"; String.size s), xs);
+
+(* 如下所示，l 只会计算一次 *)
+fun allShorterThan2 (xs, s) =
+  let
+      val l = (print "!"; String.size s)
+  in
+      filter (fn x => String.size x < l, xs)
+  end;
+```
+
+## `Fold` 函数
+
+`fold` 函数可能是除了 `map` `filter` 以外，最有用的高阶函数之一。一个简单实现如下：
+
+```
+fun fold (f, acc, xs) =
+  case xs of
+    [] => acc
+  | x :: xs' => fold(f, f(acc, x), xs');
+```
+* 注意 `f(acc, x)` 很清晰说明了 `fold` 函数的行为：不断迭代 `xs` 的每个元素，最后产生一个新的 `acc` 返回；
+
+### 分离 `recursive traversal` 与 `data processing`
+
+到目前为止，`map` `filter` `fold` 三个函数，代码非常相似：
+
+```
+fun map (f, xs) =
+  case xs of
+    [] => []
+  | x :: xs' => (f x) :: map(f, xs');
+
+fun filter (f, xs) =
+    case xs of
+      [] => []
+    | x :: xs' => if f x
+                  then x :: filter(f, xs')
+                  else filter(f, xs');
+
+fun fold (f, acc, xs) =
+  case xs of
+    [] => []
+  | x :: xs' => fold(f, f(acc, x), xs');
+```
+
+* `map` `filter` `fold` 在有的语言中，是内置特性，但在 ML 中非常容易实现；
+* 三者 **模式** 非常相似，都是 **递归遍历** + **数据处理** 的模式，其中 `map` `filter` `fold` 函数实现了递归遍历，而传入的 **闭包参数** `f` 实现了对数据的处理；
+* `recursive traversal` 和 `data processing` 部分都可以被 **重用**；
+
+## 组合函数
+
+```
+(*
+   f g 都是函数，通过 compose 函数组合在一起
+   ('a -> 'b) * ('c -> 'a) -> 'c -> 'b
+   接受 g 的参数，获得 f 的结果；g 只是中间阶段
+*)
+fun compose (f, g) = fn x => f(g x);
+
+fun sqrt_of_abs1 i =  Math.sqrt (Real.fromInt (abs i));
+
+(* o 与 compose 函数的作用相同 *)
+fun sqrt_of_abs2 i = (Math.sqrt o Real.fromInt o abs) i;
+
+val sqrt_of_abs = Math.sqrt o Real.fromInt o abs;
+
+val test1 = sqrt_of_abs1 ~9;
+val test2 = sqrt_of_abs2 ~9;
+val test3 = sqrt_of_abs ~9;
+```
+
+* `o` 用于组合函数，效果与 `compose` 函数相同；
+
+> `Math.sqrt o Real.fromInt o abs` 为 **从右向左** 结合，即先计算 `abs`，将结果传入 `Read.fromInt` 进行计算 ... 最后计算 `Math.sqrt`；
+
+### left -> right 流水线
+
+`o` 按照 `right -> left` 组合函数，即：
+
+* 获取右边表达式的计算结果，作为参数，传入左边函数 ...
+
+但程序员更加习惯 `left -> right` 的组合方式，比如 `F#` 提供的 `|>` 操作符，就是从左到右组合的，在 ML 中很容易定义该操作符：
+
+```
+(* 定义 right -> left 组合函数 *)
+infix !>;
+fun f !> g = g o f; (*  与 g f 等价 *)
+
+val sqrt_of_abs4 = abs !> Real.fromInt !> Math.sqrt;
+```
+
+`!>` 按照 `left -> right` 组合函数，即：
+
+* 获取左边计算结果，作为参数，传入右边函数 ...
+
+## 柯里化
+
+ML 中每个函数 **只有一个参数**，以前使用 `tuple` 模拟了 **多个参数** 的效果，现在使用柯里化实现多参函数。
+
+```
+val sorted3 = fn x => fn y => fn z => z >= y andalso y >= x;
+val test = ((sorted3 3) 7) 11 = true;
+```
+
+计算过程：
+
+1. 调用 `sorted3 3`，返回一个闭包：
+  * `code`: `fn y => fn z => z >= y andalso y >= x`
+  * `environment`: maps x to 3
+2. 调用 1 返回的闭包，再次返回一个闭包：
+  * `code`: `fn z => z >= y andalso y >= x`
+  * `environment`: maps x to 3, maps y to 7
+3. 调用 2 返回的闭包，得到最后结果 `true`
+
+### 语法糖
+
+#### currying 函数调用
+
+函数调用可以去掉括号：
+
+```
+sorted3 3 7 11
+```
+
+#### currying 函数定义
+
+```
+val sorted3_nicer = fn x y z => ...
+// or
+fun sorted3_nicer x y z = y >= x ...
+```
+
+#### 对比
+
+使用语法糖之前：
+
+```
+val sorted3 = fn x => fn y => fn z => z >= y andalso y >= x;
+val test = ((sorted3 3) 7) 11 = true;
+```
+
+使用语法糖之后：
+
+```
+val sorted3 x y z => z >= y andalso y >= x;
+val test = sorted3 3 7 11 = true;
+```
+
+使用语法糖的代码更加精简，但原始版本更容易理解真实的运算过程。
+
+## 部分应用
+
+前面的柯里化仅仅用于模拟 **多参函数**，需要使用与定义时 **相同数量** 的参数进行调用；但柯里化函数，可以用 **部分参数** 进行调用，称为部分应用（`partial application`）。
+
+* 部分应用可以用于 **所有** 柯里化函数；
+
+```
+fun sorted3 x y z = z >= y andalso y >= x;
+
+fun fold f acc xs =
+  case xs of
+      [] => acc
+    | x :: xs' => fold f (f(acc, x)) xs';
+
+fun range i j = if i > j then [] else i :: range (i+1) j;
+
+fun exists predicate xs =
+  case xs of
+      [] => false
+    | x :: xs' => predicate x orelse exists predicate xs';
+
+(* 提供 fewer 参数调用：部分应用 *)
+
+val is_nonegative = sorted3 0 0; (* 不要写成 fun is_nonegative x = sorted 0 0 x *)
+val sum = fold (fn (acc, x) => acc + x) 0; (* 不要写成 fun sum xs = fold (fn (acc, x) => acc + x) 0 xs *)
+val countup = range 1; (* 不要写成 fun countup x = range 1 x *)
+val has7 = exists (fn x => x = 7);
+```
+
+> `val sum = fold (fn (acc, x) => acc + x) 0` 使用部分应用，非常简洁，不要写成函数调用形式：`fun sum xs = fold (fn (acc, x) => acc + x) 0`；因为形如 `fun f x = g x` 的函数定义都可以直接写作 `val f = g`
+
+### Value Restriction
+
+柯里化 + 部分应用有时会产生 `type vars not generalized` 警告：
+
+```
+// 产生 type vars not generalized 警告，无法调用 pairWithOne 函数
+val pairWithOne = List.map (fn x => (x, 1));
+```
+
+解决办法有两种：
+
+```
+// 1. 使用 fun 绑定，而非 val 绑定
+fun pairWithOne xs = List.map (fn x => (x, 1)) xs;
+
+// 2. 使用 val 绑定，但明确指定类型
+val pairWithOne: string list -> (string * int) list = List.map (fn x => (x, 1));
+```
+
+## 回调函数
+
+
+##
