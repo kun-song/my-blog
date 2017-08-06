@@ -32,4 +32,3 @@
         * [第三部分：第一等函数、闭包、高阶函数](pl/parta/section3.md)
         * [第四部分：类型推断、模块系统、相等性](pl/parta/section4.md)
 * [阅读计划](read/read.md)
-

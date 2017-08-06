@@ -26,7 +26,7 @@
   + [Programming in Scala](https://book.douban.com/subject/26790779/)
 * 公开课
   + Programming Languages
-    - [Part A ML](https://www.coursera.org/learn/programming-languages)（进行中）
+    - [Part A ML](https://www.coursera.org/learn/programming-languages)（完成）
     - [Part B Racket](https://www.coursera.org/learn/programming-languages-part-b)
   + [Algorithms Part 1](https://www.coursera.org/learn/algorithms-part1)
 * 文档
