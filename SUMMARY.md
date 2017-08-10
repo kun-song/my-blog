@@ -31,6 +31,8 @@
         * [第二部分：类型定义](pl/parta/section2.md)
         * [第三部分：第一等函数、闭包、高阶函数](pl/parta/section3.md)
         * [第四部分：类型推断、模块系统、相等性](pl/parta/section4.md)
+    * Part B
+        * [第一部分：基础](pl/partb/section1.md)
 * [Functional Programming Principles in Scala](scala/fp-principles/introduction.md)
     * [关于风格](scala/fp-principles/scala_style.md)
     * [sbt 指南](scala/fp-principles/sbt.md)
@@ -41,3 +43,4 @@
     * [第五周：列表](scala/fp-principles/week5.md)
     * [第六周：集合](scala/fp-principles/week6.md)
 * [阅读计划](read/read.md)
+
