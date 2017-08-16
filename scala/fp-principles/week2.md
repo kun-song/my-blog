@@ -173,3 +173,214 @@ def mapReduce(combine: (Int, Int) => Int, zero: Int)(f: Int => Int)(a: Int, b: I
 def sum(f: Int => Int)(a: Int, b: Int) = mapReduce((x, y) => x + y, 0)(f)(a, b)
 def product(f: Int => Int)(a: Int, b: Int) = mapReduce((x, y) => x * y, 1)(f)(a, b)
 ```
+
+## 例子：Find the fixed point
+
+若对于函数 `f` 有 `f(x) = x`，则称 `x` 为 `f` 的 fixed point。
+
+## 函数与数据
+
+### `require` vs `assert`
+
+`require` 与 `assert` 比较类似，都接受一个 `boolean` 参数，以及一个可选的消息，且在条件不满足时都会抛出异常，但两者有如下区别：
+
+1. 使用场景不同：
+  * `require` 用于对 **函数调用者** 强制 **预置条件**；
+  * `assert` 用于检查函数本身的代码；
+2. 抛出异常不同：
+  * `require` 抛出 `IllegalArgumentException`（错误的调用参数）
+  * `assert` 抛出 `AssertionError`（代表代码本身逻辑存在错误）
+
+### 构造函数
+
+Scala 中，定义类时隐式引入了一个构造函数，称为该类的 `primary constructor`，该构造函数：
+
+1. **名字** 即为类名
+2. **参数** 为类定义时的参数
+3. **函数体** 为类中的 *全部语句**
+
+### 定义类
+
+Scala 类与 Java 很类似：
+
+```
+class Rational(x: Int, y: Int) {
+  val num = x
+  val denom = y
+}
+```
+
+与 Java 不同的是，类定时时同时引入一个构造函数，该函数与类同名，创建该类型的数据：
+
+```
+val x = new Rational(2, 3)
+```
+
+除了隐式的构造函数，还可以添加其他构造函数：
+
+```
+def this(x: Int) = this(x, 1)
+```
+
+再添加基本的算术方法，可以得到：
+
+```
+class Rational(x: Int, y: Int) {
+  require(y != 0, "den can't be 0!")
+
+  def num: Int = x
+  def den: Int = y
+
+  def this(x: Int) = this(x, 1)
+
+  def add(that: Rational) =
+    new Rational(
+      num * that.den + den * that.num,
+      den * that.den)
+
+  def neg = new Rational(-num, den)
+
+  def sub(that: Rational): Rational = this.add(that.neg)
+
+  def less(that: Rational): Boolean = num * that.den < den * that.num
+
+  def max(that: Rational): Rational = if (this.less(that)) that else this
+
+  override def toString: String = num + "/" + den
+}
+```
+
+### 化简
+
+目前得到的 `Rational` 类，不会输出分数的最简形式，比如：
+
+```
+// 输出 6/3
+val x = new Rational(6, 3)
+```
+
+有两种化简方式：
+
+1. 在构造时化简
+2. 在打印时化简
+
+但方式 2 存在数字溢出的可能，因为 `Int` 值是有限的，所以最合理的是在创建 `Rational` 时即进行化简：
+
+```
+class RationalS(x: Int, y: Int) {
+  require(y != 0, "den can't be 0!")
+
+  private def gcd(a: Int, b: Int): Int = if (b == 0) a else gcd(b, a % b)
+  private val g = gcd(x, y)
+
+  def num: Int = x / g
+  def den: Int = y / g
+
+  def this(x: Int) = this(x, 1)
+
+  def add(that: RationalS) =
+    new RationalS(
+      num * that.den + den * that.num,
+      den * that.den)
+
+  def neg = new RationalS(-num, den)
+
+  def sub(that: RationalS): RationalS = this.add(that.neg)
+
+  def less(that: RationalS): Boolean = num * that.den < den * that.num
+
+  def max(that: RationalS): RationalS = if (this.less(that)) that else this
+
+  override def toString: String = num + "/" + den
+}
+```
+* `gcd` `g` 都只用于类内部化简，所以定义为 `private`
+
+## 操作符
+
+前面定义的 `Rational` 类，与平时我们认识的分数操作有些差异：
+
+```
+x + y
+x.add(y)
+```
+
+Scala 通过两种方式抹平这些差异。
+
+### 中缀操作符
+
+Scala 中，任何 **只有一个参数** 的方法都可以用作中缀操作符，比如 `Rational` 类中的 `add` `sub` `max` 等该方法：
+
+```
+s.add(r)  <=>  s add r
+s.sub(r)  <=>  s sub r
+s.max(r)  <=>  s max r
+```
+
+可以看到，相比传统的方法调用方式，中缀更加符合人类习惯。
+
+### 操作符 -> 标识符
+
+Scala 中，操作符可以用作标识符，实际上，Scala 的标识符有两种：
+
+1. **Alphanumeric**: starting with a letter, followed by a sequence of letters or numbers
+2. **Symbolic**: starting with an operator symbol, followed by other operator symbols.
+
+注意：
+
+* The underscore character `_` counts as a letter.
+* Alphanumeric identifiers can also end in an underscore, followed by some operator symbols.
+
+#### 优先级
+
+自定义的操作如优先级由其 **首字母** 决定：
+
+```
+(all letters)
+|
+^
+&
+< >
+= !
+:
++ -
+* / %
+(all other special characters)
+```
+
+越向下，优先级越高。
+
+### `Rational` 最终版
+
+```
+class Rational(x: Int, y: Int) {
+  require(y != 0, "den can't be 0!")
+
+  private def gcd(a: Int, b: Int): Int = if (b == 0) a else gcd(b, a % b)
+  private val g = gcd(x, y)
+
+  def num: Int = x / g
+  def den: Int = y / g
+
+  def this(x: Int) = this(x, 1)
+
+  def + (that: Rational) =
+    new Rational(
+      num * that.den + den * that.num,
+      den * that.den)
+
+  def - (that: Rational): Rational = this + -that
+
+  def < (that: Rational): Boolean = num * that.den < den * that.num
+
+  def max(that: Rational): Rational = if (this < that) that else this
+
+  def unary_- = new Rational(-num, den)
+
+  override def toString: String = num + "/" + den
+}
+```
+
+`add` `sub` `less` 使用 `+` `-` `<` 替代，更加自然。
+
+> 注意 unary_ 用来定义单操作数函数。
