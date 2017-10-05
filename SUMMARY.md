@@ -20,6 +20,8 @@
     * [JSR 133 (Java Memory Model) FAQ](java/jsr133_faq.md)
     * [Java 7 异常改进](java/exception_enhancement.md)
 * [Scala](scala.md)
+    * [Scala 99](scala/scala99.md)
+    * [偏函数与部分应用](scala/partial_function_vs_partial_applied_function.md)
 * [Maven](maven.md)
 * [Git](git.md)
 * [React](react.md)
@@ -42,5 +44,7 @@
     * [第四周：类型与模式匹配](scala/fp-principles/week4.md)
     * [第五周：列表](scala/fp-principles/week5.md)
     * [第六周：集合](scala/fp-principles/week6.md)
+* [Leetcode](lt/leetcode.md)
+    * [Array](lt/array.md)
 * [阅读计划](read/read.md)
 
