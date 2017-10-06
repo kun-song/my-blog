@@ -25,6 +25,21 @@ val isEven: PartialFunction[Int, String] = {
 }
 ```
 
+Scala 编译器将 `isEven` 展开如下：
+
+```scala
+val isEven = new PartialFunction[Int, String] {
+  override def isDefinedAt(x: Int) = x match {
+    case x if x % 2 == 0 ⇒ true
+    case _               ⇒ false
+  }
+
+  override def apply(x: Int) = x match {
+    case x if x % 2 == 0 ⇒ s"$x is even"
+  }
+}
+```
+
 `PartialFunction[-A, +B]` 与 `scala.Function1` 的区别是，偏函数的调用者可以对其作用域之外的取值做处理，例如：
 
 ```scala
