@@ -21,6 +21,7 @@
 * [Scala](scala.md)
     * [Scala 99](scala/scala99.md)
     * [偏函数与部分应用](scala/partial_function_vs_partial_applied_function.md)
+    * [Stream & 惰性求值](scala/stream_and_lazy.md)
 * [Maven](maven.md)
 * [Git](git.md)
 * [Programming Languages](pl/programming-languages.md)
@@ -44,3 +45,4 @@
 * [Leetcode](lt/leetcode.md)
     * [Array](lt/array.md)
 * [阅读计划](read/read.md)
+
