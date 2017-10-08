@@ -1,7 +1,6 @@
 # Summary
 
 * [Introduction](README.md)
-* [Spring](spring.md)
 * [Spring Boot](springboot/introduction.md)
     * [测试](springboot/test.md)
 * [Java](java/java.md)
@@ -24,8 +23,6 @@
     * [偏函数与部分应用](scala/partial_function_vs_partial_applied_function.md)
 * [Maven](maven.md)
 * [Git](git.md)
-* [React](react.md)
-    * [Redux](redux.md)
 * [Programming Languages](pl/programming-languages.md)
     * Part A
         * [安装软件](pl/parta/installation.md)
@@ -47,4 +44,3 @@
 * [Leetcode](lt/leetcode.md)
     * [Array](lt/array.md)
 * [阅读计划](read/read.md)
-

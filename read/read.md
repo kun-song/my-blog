@@ -28,7 +28,7 @@
   + Programming Languages
     - [Part A ML](https://www.coursera.org/learn/programming-languages)（完成）
     - [Part B Racket](https://www.coursera.org/learn/programming-languages-part-b)
-  + [Algorithms Part 1](https://www.coursera.org/learn/algorithms-part1)
+  + [Algorithms Part 1](https://www.coursera.org/learn/algorithms-part1)（进行中）
 * 文档
   + [Spring Data MongoDB](https://docs.spring.io/spring-data/data-mongo/docs/current/reference/html/)（完成）
   + [SpringBoot](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
