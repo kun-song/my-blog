@@ -40,6 +40,3 @@
     * [第五周：列表](scala/fp-principles/week5.md)
     * [第六周：集合](scala/fp-principles/week6.md)
 * [阅读计划](read/read.md)
-* [面试](interview/Introduction.md)
-    * [倍发科技](interview/beifa.md)
-    * [快牛金科](interview/kuainiu.md)
