@@ -1,8 +1,6 @@
 # Summary
 
 * [Introduction](README.md)
-* [Spring Boot](springboot/introduction.md)
-    * [测试](springboot/test.md)
 * [Java](java/java.md)
     * [Java 并发课程](java/OracleJavaTutorials/java_lesson_concurrency.md)
         * [进程与线程](java/OracleJavaTutorials/processes_and_threads.md)
@@ -22,7 +20,6 @@
     * [Scala 99](scala/scala99.md)
     * [偏函数与部分应用](scala/partial_function_vs_partial_applied_function.md)
     * [Stream & 惰性求值](scala/stream_and_lazy.md)
-* [Maven](maven.md)
 * [Git](git.md)
 * [Programming Languages](pl/programming-languages.md)
     * Part A
@@ -42,8 +39,7 @@
     * [第四周：类型与模式匹配](scala/fp-principles/week4.md)
     * [第五周：列表](scala/fp-principles/week5.md)
     * [第六周：集合](scala/fp-principles/week6.md)
-* [Leetcode](lt/leetcode.md)
-    * [Array](lt/array.md)
 * [阅读计划](read/read.md)
 * [面试](interview/Introduction.md)
     * [倍发科技](interview/beifa.md)
+    * [快牛金科](interview/kuainiu.md)
